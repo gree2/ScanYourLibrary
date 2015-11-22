@@ -3,19 +3,17 @@ package io.github.gree2.scanyourlibrary;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.journeyapps.barcodescanner.camera.CameraManager;
 
 import io.github.gree2.scanyourlibrary.adapter.BookAdapter;
 import io.github.gree2.scanyourlibrary.model.Book;
@@ -23,7 +21,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     ListView lvBooks;
 
@@ -56,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // setting the nav drawer list adapter
         bookAdapter = new BookAdapter(getApplicationContext(), books, true);
+        lvBooks.setOnItemClickListener(this);
         lvBooks.setAdapter(bookAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -67,6 +66,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         scanIntegrator.initiateScan();
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        view.setSelected(true);
+        Intent intent = new Intent(getApplicationContext(),
+                BookDetailActivity.class);
+        intent.putExtra("isbn", (bookAdapter.getItem(position)).getIsbn());
+        intent.putExtra("isSynced", (bookAdapter.getItem(position)).getSync());
+        startActivity(intent);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         //retrieve result of scanning - instantiate ZXing object
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
@@ -75,7 +84,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String isbn = scanningResult.getContents();
             String format = scanningResult.getFormatName();
             if (isbn != null && format != null && "EAN_13".equals(format)) {
-                saveScanInfo(isbn, format);
+
+                // replace this line with new activity
+                //saveScanInfo(isbn, format);
+                // new book detail activity
+                Intent detail = new Intent(getApplicationContext(),
+                        BookDetailActivity.class);
+                detail.putExtra("isbn", isbn);
+                detail.putExtra("isSynced", false);
+                startActivity(detail);
             }
         } else {
             //invalid scan data or scan canceled
