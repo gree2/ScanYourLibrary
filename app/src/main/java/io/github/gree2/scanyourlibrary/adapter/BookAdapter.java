@@ -18,10 +18,6 @@ import io.realm.RealmResults;
  */
 public class BookAdapter  extends RealmBaseAdapter<Book> implements ListAdapter {
 
-    private String TAG = BookAdapter.class.getSimpleName();
-
-    //private ViewHolder holder = new ViewHolder();
-
     private Context context;
 
     private RealmResults<Book> realmResults;
@@ -50,20 +46,6 @@ public class BookAdapter  extends RealmBaseAdapter<Book> implements ListAdapter 
             holder.bookIsbn = (TextView) convertView.findViewById(R.id.book_isbn);
             holder.bookTitl = (TextView) convertView.findViewById(R.id.book_title);
             holder.sync_status = (ImageView) convertView.findViewById(R.id.sync_status);
-            final ImageView ivSync = holder.sync_status;
-
-//            holder.sync_status.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    // is synced
-//                    if (book.getSync() != null && book.getSync()){
-//                        holder.sync_status.setImageResource(R.drawable.done);
-//                    } else {
-//                        //DoSyncData(ivSync, book.getIsbn());
-//                    }
-//                }
-//            });
-
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -71,11 +53,6 @@ public class BookAdapter  extends RealmBaseAdapter<Book> implements ListAdapter 
 
         holder.bookIsbn.setText(book.getIsbn());
         holder.bookTitl.setText(book.getTitl());
-//        if (book.getSync() != null && book.getSync()){
-//            holder.sync_status.setImageResource(R.drawable.done);
-//        } else{
-//            holder.sync_status.setImageResource(R.drawable.sync);
-//        }
         return convertView;
     }
 }

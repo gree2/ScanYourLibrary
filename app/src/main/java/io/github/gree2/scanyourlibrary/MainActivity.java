@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -25,7 +26,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ListView lvBooks;
 
-    //private RealmResults books;
+    FloatingActionButton fabScan;
+
+    private int lastFirstVisibleItem;
 
     private BookAdapter bookAdapter;
 
@@ -57,8 +60,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lvBooks.setOnItemClickListener(this);
         lvBooks.setAdapter(bookAdapter);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(this);
+        fabScan = (FloatingActionButton) findViewById(R.id.fab);
+        fabScan.setOnClickListener(this);
+
+        // show and hide scan button
+        // http://stackoverflow.com/questions/12114963/detecting-the-scrolling-direction-in-the-adapter-up-down
+        lvBooks.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                final ListView lw = lvBooks;
+                final FloatingActionButton finalFab = fabScan;
+
+                if (view.getId() == lw.getId()) {
+                    final int currentFirstVisibleItem = lw.getFirstVisiblePosition();
+                    if (currentFirstVisibleItem > lastFirstVisibleItem) {
+                        // hide scan button
+                        finalFab.setVisibility(View.INVISIBLE);
+                    } else if (currentFirstVisibleItem < lastFirstVisibleItem) {
+                        // show scan button
+                        finalFab.setVisibility(View.VISIBLE);
+                    }
+                    lastFirstVisibleItem = currentFirstVisibleItem;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
     }
 
     public void onClick(View v) {
